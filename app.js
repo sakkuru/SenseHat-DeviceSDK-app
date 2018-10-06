@@ -9,7 +9,10 @@ const clientFromConnectionString = require("azure-iot-device-mqtt")
 const Message = require("azure-iot-device").Message;
 
 const connectionString = process.env.DeviceConnectionString;
-const client = clientFromConnectionString(connectionString);
+let client;
+if (connectionString) {
+  client = clientFromConnectionString(connectionString);
+}
 
 let interval = 3000;
 let sendDataTimer;
@@ -54,6 +57,7 @@ const sendMessage = messageText => {
 
 const formatData = raw => {
   const data = {};
+  console.log(raw);
   data.accelX = raw.accel.x;
   data.accelY = raw.accel.y;
   data.accelZ = raw.accel.z;
@@ -86,14 +90,28 @@ const sendSensorData = interval => {
   }, interval);
 };
 
-client.open(err => {
-  if (err) {
-    console.error("Could not connect: " + err.message);
-    return;
-  }
-  sendSensorData(interval);
-  client.onDeviceMethod("random", randomLED);
-});
+const showSensorData = interval => {
+  sendDataTimer = setInterval(() => {
+    getSensorData().then(rawData => {
+      const sensorData = formatData(rawData);
+      console.log("sensorData", sensorData);
+    });
+  }, interval);
+};
+
+if (client) {
+  client.open(err => {
+    if (err) {
+      console.error("Could not connect: " + err.message);
+      return;
+    }
+
+    sendSensorData(interval);
+    client.onDeviceMethod("random", randomLED);
+  });
+} else {
+  showSensorData(interval);
+}
 
 /////////////////////////////////////////////////////////////////////
 sense.showMessage("Hello!", 0.1, [255, 255, 255], [50, 50, 50]);
