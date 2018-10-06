@@ -1,0 +1,19 @@
+{
+  "name": "sensehat-devicesdk-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "azure-iot-device-mqtt": "^1.7.4",
+    "dotenv": "^6.0.0",
+    "node-sense-hat": "0.0.2",
+    "nodemon": "^1.18.4",
+    "sense-hat-led": "^1.0.1"
+  }
+}
